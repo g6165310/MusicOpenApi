@@ -1,0 +1,145 @@
+@import "~bootstrap/scss/functions";
+@import "./helpers/_variables";
+@import "~bootstrap/scss/bootstrap";
+@import url('https://fonts.googleapis.com/css?family=Oswald:400,700');
+@import url('https://fonts.googleapis.com/earlyaccess/cwtexyen.css');
+
+$font-family: 'Oswald','cwTeXYen', sans-serif;
+body{
+  font-family: $font-family;
+}
+.bg-cover{
+  background-position: center center;
+  background-size: cover;
+}
+a{
+  text-decoration: none;
+  color: gray;
+  
+}
+nav{
+  a{
+    color: white;
+    &:hover{
+      color:gray;
+    }
+  }
+}
+#header{
+  height:100vh;
+  width: 100%;
+  padding-top: 10vh;
+  background-image: url('https://images.unsplash.com/photo-1516280440614-37939bbacd81?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=3dd4e03b7ee0a4a60d5f34e0cc11a66c&auto=format&fit=crop&w=1050&q=80');
+  color:white;
+
+  position: relative;
+  text-align: center;
+  h1{
+    font-size: 50px;
+    text-shadow: 3px 3px 8px gray;
+  }
+  span{
+    font-size: 20px;
+    &:after {
+      animation:header-animate 6s linear infinite;
+      display: block;
+      content: "音樂，征服世界每個舞台";
+    }
+  }
+  @media screen and (min-width: 540px) {
+    padding-top: 40vh;
+    h1 {
+      font-size: 80px;
+    }
+  }
+  @media screen and (min-width: 768px) {
+    h1 {
+      font-size: 100px;
+    }
+  }
+}
+#w{
+  height: 500px;
+  background-color: #fff;
+}
+#scroll-down{
+  position: absolute;
+  right:50%;
+  bottom:20px;
+  width: 30px;
+  height: 48px;
+  border-radius:25px;
+  background: transparent;
+  border:2px solid #fff;
+  overflow:hidden;
+  z-index: 1;
+  
+}
+#scroll-down:before{
+  content:'';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius:50%;
+  background: #fff;
+  left: 50%;
+  top:10px;
+  transform:translateX(-50%);
+  animation:animate 1.5s linear infinite;
+  }
+#scroll-down:after{
+  content:'';
+  position: absolute;
+  width: 6px;
+  height: 12px;
+  border-radius:3px;
+  background: #fff;
+  left: 50%;
+  top:10px;
+  transform:translateX(-50%)
+  
+  }
+@keyframes animate {
+  0%{
+    transform:translate(-50%,0px);
+    opacity: 0;
+  }
+  80%{
+    transform:translate(-50%,60px);
+    opacity: 1;
+  }
+  100%{
+    transform:translate(-50%,100px);
+    opacity: 0;
+  }
+}
+
+@keyframes header-animate {
+  0%{
+    content:"獨立，不再只是獨立";
+    opacity: 1;
+  }
+  50%{
+    
+    opacity: 0;
+  }
+  100%{
+    content:"音樂，征服世界每個舞台";
+    opacity: 1;
+  }
+}
+
+.card-body{
+  height: 100px;
+}
+
+.card{
+  a{
+    &:hover{
+      text-decoration: none;
+      color: rgb(13, 13, 14);
+      box-shadow: 3px 3px 10px #aaaaaa;
+      transition: all 0.3s
+    }
+  }
+}
