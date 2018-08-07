@@ -185,7 +185,7 @@ export default {
       if(items.length/9<1){
         vm.totalPage = 1
       }else{
-        vm.totalPage = items.length/9;
+        vm.totalPage = Math.ceil(items.length/9);
       }
       items.forEach((item, i) => {
         if (i % 9 === 0) {
