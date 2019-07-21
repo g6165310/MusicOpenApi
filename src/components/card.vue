@@ -7,10 +7,12 @@
     li.nav-item
       a.nav-link(href='#' @click.prevent="getLike" :class="{active: !isAllData}") 我的最愛
   .row.justify-content-center.mb-5
-    .col-sm-6
+    .col-sm-6(v-if='rawData.length>0')
       select.form-control.input-lg(v-model="selectLocation")
         option(value="") -請選擇地區-
         option(:value="location" v-for="location in locations") {{location}}
+    .col-sm-6(v-else)
+      p.h3.text-center 目前沒有資料
   .row
     .col-md-4(v-for="(item,i) in filterData[currentPage-1]")
       a(href="#" @click.prevent="showInfo(item)").card.mb-4.box-shadow
@@ -36,7 +38,7 @@
           P(v-if="returnInfo") 地點: {{returnInfo.showInfo[0].locationName}}
           P(v-if="returnInfo") 地址: {{returnInfo.showInfo[0].location}}
           p(v-if="returnInfo") 票價: {{returnInfo.showInfo[0].price }}
-          googleMap(:place="selectItem")
+          googleMap(:selected="selectItem")
           
   nav.my-5(aria-label='Page navigation example')
     ul.pagination.justify-content-center
@@ -60,23 +62,23 @@
 </template>
 <script>
 import $ from "jquery";
-import googleMap from './googleMap';
+import googleMap from "./googleMap";
 export default {
-  components:{
-    googleMap,
+  components: {
+    googleMap
   },
   data() {
     return {
       rawData: [],
-      dealingData:[],
-      selectItem:[],
-      totalPage:0,
+      dealingData: [],
+      selectItem: [],
+      totalPage: 0,
       currentPage: 1,
       locations: [],
-      selectLocation: '',
-      like:[],
-      isLiked:false,
-      isAllData:true,
+      selectLocation: "",
+      like: [],
+      isLiked: false,
+      isAllData: true
     };
   },
   methods: {
@@ -90,90 +92,88 @@ export default {
         vm.getCityList();
       });
     },
-    cleanData(){
+    cleanData() {
       const vm = this;
       vm.rawData.forEach((item, i) => {
-        if(item.showInfo!=false){
-          if(item.showInfo[0].location.match('捷運行天宮')){
-            item.showInfo[0].location = '台北市'
-          }else{
-            item.showInfo[0].location = item.showInfo[0].location.replace("[",'').replace('401','').replace("臺","台");
+        if (item.showInfo != false) {
+          if (item.showInfo[0].location.match("捷運行天宮")) {
+            item.showInfo[0].location = "台北市";
+          } else {
+            item.showInfo[0].location = item.showInfo[0].location
+              .replace("[", "")
+              .replace("401", "")
+              .replace("臺", "台");
           }
-          if(item.showInfo[0].price==""){
-            item.showInfo[0].price = 'Free'
+          if (item.showInfo[0].price == "") {
+            item.showInfo[0].price = "Free";
           }
         }
       });
-      vm.dealingData = vm.rawData
+      vm.dealingData = vm.rawData;
     },
-    getCityList(){
+    getCityList() {
       const locations = new Set();
       const vm = this;
       vm.rawData.forEach((item, i) => {
-        if(item.showInfo!=false){
-          locations.add(item.showInfo[0].location.slice(0,3));
+        if (item.showInfo != false) {
+          locations.add(item.showInfo[0].location.slice(0, 3));
         }
       });
       vm.locations = Array.from(locations);
     },
-    showInfo(item){
+    showInfo(item) {
       const vm = this;
-      vm.isLiked=false;
+      vm.isLiked = false;
       vm.selectItem = item;
-      console.log(vm.selectItem)
-      
-      let result = $.map(vm.like,function(item,index){
-        return item.UID
-      }).indexOf(vm.selectItem.UID)
-      if(result!=-1){
-        vm.isLiked = true
+      let result = $.map(vm.like, function(item, index) {
+        return item.UID;
+      }).indexOf(vm.selectItem.UID);
+      if (result != -1) {
+        vm.isLiked = true;
       }
-      $('#exampleModal').modal('show');
+      $("#exampleModal").modal("show");
     },
-    addToLike(selectItem){
-      const vm =this;
+    addToLike(selectItem) {
+      const vm = this;
       vm.like.push(selectItem);
-      vm.isLiked= true;
-      localStorage.setItem('Like',JSON.stringify(vm.like));
+      vm.isLiked = true;
+      localStorage.setItem("Like", JSON.stringify(vm.like));
     },
-    removeLike(selectItem){
-      const vm =this;
-      let index = vm.like.indexOf(selectItem)
-      console.log(index)
-      if(index>-1){
-        vm.like.splice(index,1)
-        console.log(index)
+    removeLike(selectItem) {
+      const vm = this;
+      let index = vm.like.indexOf(selectItem);
+      if (index > -1) {
+        vm.like.splice(index, 1);
         localStorage.clear;
-        localStorage.setItem('Like',JSON.stringify(vm.like));
-        vm.isLiked=false;
+        localStorage.setItem("Like", JSON.stringify(vm.like));
+        vm.isLiked = false;
       }
     },
-    
-    getLike(){
-      const vm =this;
+
+    getLike() {
+      const vm = this;
       vm.dealingData = vm.like;
-      console.log(vm.dealingData)
       vm.isAllData = false;
       vm.currentPage = 1;
     },
-    prev(){
-      if(this.currentPage>1){
-        cons
-        this.currentPage = this.currentPage-1
+    prev() {
+      if (this.currentPage > 1) {
+        cons;
+        this.currentPage = this.currentPage - 1;
       }
     },
-    next(){
-      if(this.currentPage<this.totalPage){
-        this.currentPage = this.currentPage+1
+    next() {
+      if (this.currentPage < this.totalPage) {
+        this.currentPage = this.currentPage + 1;
       }
-    },
+    }
   },
-  computed:{
+  computed: {
     filterData() {
       const vm = this;
       // 先過濾
       let items = [];
-      if (vm.selectLocation !== '') {
+      if (vm.selectLocation !== "") {
         items = vm.dealingData.filter((item, i) => {
           return item.showInfo[0].location.match(vm.selectLocation);
         });
@@ -182,10 +182,10 @@ export default {
       }
       // 分頁
       const newData = [];
-      if(items.length/9<1){
-        vm.totalPage = 1
-      }else{
-        vm.totalPage = Math.ceil(items.length/9);
+      if (items.length / 9 < 1) {
+        vm.totalPage = 1;
+      } else {
+        vm.totalPage = Math.ceil(items.length / 9);
       }
       items.forEach((item, i) => {
         if (i % 9 === 0) {
@@ -197,47 +197,49 @@ export default {
 
       return newData;
     },
-    returnInfo(){
+    returnInfo() {
       const vm = this;
-      if(vm.selectItem.showInfo){
-        return  vm.selectItem
+      if (vm.selectItem.showInfo) {
+        return vm.selectItem;
       }
     },
-    returnImageUrl(){
+    returnImageUrl() {
       const vm = this;
-      if(vm.selectItem.imageUrl){
-        return  vm.selectItem.imageUrl
+      if (vm.selectItem.imageUrl) {
+        return vm.selectItem.imageUrl;
       }
     },
-    pagers(){
-      const vm =this;
-      const array = []
-      let current = this.currentPage
-      const offset={
-        start:current-2,
-        end:current+2,
-      }
-      if(offset.start < 1){
-        offset.end = offset.end + (1 - offset.start)
-        offset.start = 1
+    pagers() {
+      const vm = this;
+      const array = [];
+      let current = this.currentPage;
+      const offset = {
+        start: current - 2,
+        end: current + 2
+      };
+      if (offset.start < 1) {
+        offset.end = offset.end + (1 - offset.start);
+        offset.start = 1;
       }
       if (offset.end > vm.totalPage) {
-        offset.start = offset.start - (offset.end - vm.totalPage)
-        offset.end = vm.totalPage
+        offset.start = offset.start - (offset.end - vm.totalPage);
+        offset.end = vm.totalPage;
       }
-      if (offset.start < 1) offset.start = 1
+      if (offset.start < 1) offset.start = 1;
       for (let i = offset.start; i <= offset.end; i++) {
-        array.push(i)
+        array.push(i);
       }
-      return array
-    },
+      return array;
+    }
   },
   created() {
     this.getRawData();
-    const vm =this;
-    if(JSON.parse(localStorage.getItem('Like')).length!=0){
-      vm.like = JSON.parse(localStorage.getItem('Like'))
-      console.log(vm.like)
+    const vm = this;
+    if (
+      JSON.parse(localStorage.getItem("Like")) &&
+      JSON.parse(localStorage.getItem("Like")).length != 0
+    ) {
+      vm.like = JSON.parse(localStorage.getItem("Like"));
     }
   }
 };
